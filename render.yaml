@@ -3,26 +3,25 @@ services:
     name: service-bay-api
     env: python
     region: frankfurt
-    plan: free
-    branch: main
     rootDir: backend
-
-    buildCommand: |
-      pip install -r requirements.txt
-      python manage.py collectstatic --noinput
-      python manage.py makemigrations
-      python manage.py migrate
-
-    startCommand: gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT
-
-    disk:
-      name: sqlite-data
-      mountPath: /var/data
-      sizeGB: 1
-
+    plan: free
+    
+    buildFilter:
+      paths:
+        - "backend/**"
+        
+    buildCommands:
+      - pip install -r requirements.txt
+      - python manage.py migrate
+      
+    startCommand: "gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT"
+    
     envVars:
       - key: DATABASE_URL
-        value: sqlite:////var/data/db.sqlite3
+        # This securely connects to the database we created in Step 1
+        fromService:
+          type: psql
+          name: service-bay-db # Must match the name you gave your DB
       - key: DJANGO_SETTINGS_MODULE
         value: service_bay_api.settings
       - key: WEB_CONCURRENCY
@@ -30,4 +29,5 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
-        value: "False"
+        value: False
+
