@@ -1,0 +1,8 @@
+Python / Django
+pycache/ *.pyc venv/ .env
+
+Node.js / React
+node_modules/ build/ .npm/ npm-debug.log
+
+Database
+db.sqlite3
