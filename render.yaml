@@ -1,3 +1,6 @@
+# This is the definitive blueprint for Render.
+# It declaratively creates both the database and the web service.
+
 databases:
   - name: service-bay-db
     databaseName: service_bay
