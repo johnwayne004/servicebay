@@ -1,4 +1,4 @@
-# render.yaml — Django backend + PostgreSQL for Render (Free Tier Compatible)
+# render.yaml — Django backend + PostgreSQL (Free Tier Compatible)
 
 databases:
   - name: service-bay-db
@@ -26,8 +26,7 @@ services:
 
     envVars:
       - key: DATABASE_URL
-        fromService:
-          type: psql
+        fromDatabase:
           name: service-bay-db
       - key: DJANGO_SETTINGS_MODULE
         value: service_bay_api.settings
