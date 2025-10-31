@@ -1,3 +1,4 @@
+# This is the definitive blueprint for Render, placed in the project root.
 services:
   - type: web
     name: service-bay-api
@@ -11,7 +12,9 @@ services:
         - "backend/**"
         
     buildCommands:
+      # We must install the new packages first
       - pip install -r requirements.txt
+      # Then we run migrations on the new database
       - python manage.py migrate
       
     startCommand: "gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT"
@@ -21,7 +24,7 @@ services:
         # This securely connects to the database we created in Step 1
         fromService:
           type: psql
-          name: service-bay-db # Must match the name you gave your DB
+          name: service-bay-db # This MUST match the name you gave your DB
       - key: DJANGO_SETTINGS_MODULE
         value: service_bay_api.settings
       - key: WEB_CONCURRENCY
