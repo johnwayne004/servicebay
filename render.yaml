@@ -2,44 +2,30 @@ services:
   - type: web
     name: service-bay-api
     env: python
-    region: frankfurt # You can change this to a region closer to you
-    rootDir: . # Specifies that the backend is in this folder
-    plan: free # Use Render's free tier
-    
-    # This filter tells Render to only rebuild this service
-    # if a file inside the 'backend' folder changes.
+    region: frankfurt
+    rootDir: backend
+    plan: free
     buildFilter:
       paths:
         - "backend/**"
-        
     buildCommands:
-      # These commands run when Render builds your application
       - pip install -r requirements.txt
       - python manage.py makemigrations
       - python manage.py migrate
-      
     startCommand: "gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT"
-    
-    # This is the high-skilled solution to save your SQLite database
-    # It creates a persistent disk that does not get deleted on deploy.
     disks:
       - name: sqlite-data
         mountPath: /var/data
         sizeGB: 1
-
     envVars:
-      # Tell Django where to find the database on the persistent disk
       - key: DATABASE_URL
         value: sqlite:////var/data/db.sqlite3
-      # Tell Django which settings file to use
       - key: DJANGO_SETTINGS_MODULE
         value: service_bay_api.settings
-      # Tell Gunicorn how many workers to run
       - key: WEB_CONCURRENCY
         value: 4
-      # Get the secret key from a secure environment variable
       - key: SECRET_KEY
-        generateValue: true # Render will automatically generate a strong secret key
-      # Set DEBUG to False for production
+        generateValue: true
       - key: DEBUG
         value: False
+
