@@ -27,7 +27,7 @@ services:
     envVars:
       - key: DATABASE_URL
         fromService:
-          type: database
+          type: psql
           name: service-bay-db
       - key: DJANGO_SETTINGS_MODULE
         value: service_bay_api.settings
