@@ -1,23 +1,17 @@
 from pathlib import Path
 from datetime import timedelta
-import os # Import 'os' to read environment variables set by Render
+import os
+import dj_database_url # for database URL parsing
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- DEFINITIVE PRODUCTION SETTINGS ---
-
-# SECRET_KEY: Read from the environment variable Render creates.
-# This keeps your key private and secure.
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default-development-key')
-
-# DEBUG: Will be 'False' on Render (set in render.yaml), but 'True' if you run locally.
+# SECRET_KEY and DEBUG are now read from environment variables set by Render
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-local-dev')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# ALLOWED_HOSTS: Allows your local machine and the live Render service URL.
+# We must allow the Render domain name. '.onrender.com' is a wildcard.
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
-
-# --- END PRODUCTION SETTINGS ---
 
 # Application definition
 INSTALLED_APPS = [
@@ -65,16 +59,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'service_bay_api.wsgi.application'
 
-# --- DEFINITIVE DATABASE SETTING FOR RENDER ---
-# This tells Django to use the persistent disk path we defined in render.yaml
-# when on the server, or the local db.sqlite3 file when in development.
+
+# --- THIS IS THE DEFINITIVE DATABASE FIX ---
+# This code checks if the DATABASE_URL from Render exists.
+# If it does, it uses the live PostgreSQL database.
+# If it does not (meaning we are local), it falls back to db.sqlite3.
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.environ.get('DATABASE_URL', BASE_DIR / 'db.sqlite3'),
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
+    )
 }
-# --- END DATABASE SETTING ---
+# --- END FIX ---
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
@@ -91,25 +88,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
 
-# --- CORS SETTINGS ---
-# This list must be updated one last time after you deploy your frontend to Vercel.
-# For now, it includes your local development addresses.
+# We will add your Vercel URL here after you deploy the frontend
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://192.168.1.102:3000",
-    # "https://your-frontend-app-name.vercel.app" # We will add this later
 ]
 CORS_ALLOW_CREDENTIALS = True
-# --- END CORS SETTINGS ---
 
-# --- REST FRAMEWORK SETTINGS ---
-# This is correct. Pagination is defined in the views that need it.
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',)
 }
-# --- END REST FRAMEWORK ---
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
