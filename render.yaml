@@ -3,20 +3,23 @@ services:
     name: service-bay-api
     env: python
     region: frankfurt
-    rootDir: backend
     plan: free
-    buildFilter:
-      paths:
-        - "backend/**"
-    buildCommands:
-      - pip install -r requirements.txt
-      - python manage.py makemigrations
-      - python manage.py migrate
-    startCommand: "gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT"
-    disks:
-      - name: sqlite-data
-        mountPath: /var/data
-        sizeGB: 1
+    branch: main
+    rootDir: backend
+
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py makemigrations
+      python manage.py migrate
+
+    startCommand: gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT
+
+    disk:
+      name: sqlite-data
+      mountPath: /var/data
+      sizeGB: 1
+
     envVars:
       - key: DATABASE_URL
         value: sqlite:////var/data/db.sqlite3
@@ -27,5 +30,4 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
-        value: False
-
+        value: "False"
