@@ -1,5 +1,4 @@
-# This is the definitive blueprint for Render.
-# It declaratively creates both the database and the web service.
+# render.yaml — Django backend + PostgreSQL for Render (Free Tier Compatible)
 
 databases:
   - name: service-bay-db
@@ -14,18 +13,17 @@ services:
     env: python
     region: frankfurt
     plan: free
+    branch: main
     rootDir: backend
-    
-    buildFilter:
-      paths:
-        - "backend/**"
-        
-    buildCommands:
-      - pip install -r requirements.txt
-      - python manage.py migrate
-      
-    startCommand: "gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT"
-    
+
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py makemigrations
+      python manage.py migrate
+
+    startCommand: gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT
+
     envVars:
       - key: DATABASE_URL
         fromService:
@@ -39,4 +37,3 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
-
