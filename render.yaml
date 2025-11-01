@@ -1,4 +1,6 @@
-# render.yaml
+# This is the definitive blueprint for Render.
+# It declaratively creates both the database and the web service.
+
 databases:
   - name: service-bay-db
     databaseName: service_bay
@@ -10,17 +12,18 @@ services:
   - type: web
     name: service-bay-api
     env: python
-    plan: free
     region: frankfurt
+    plan: free
     branch: main
     rootDir: backend
-
-    buildCommand: |
+    
+    buildCommands: |
       pip install -r requirements.txt
       python manage.py migrate
-
-    startCommand: gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT
-
+      python manage.py createadmin
+      
+    startCommand: "gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT"
+    
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -34,3 +37,9 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
+      
+      # Environment variables for the 'createadmin' command
+      # You must set these in the Render Dashboard.
+      - key: ADMIN_EMAIL
+      - key: ADMIN_PASSWORD
+
