@@ -1,5 +1,4 @@
-# This file creates both the database and the web service.
-
+# render.yaml
 databases:
   - name: service-bay-db
     databaseName: service_bay
@@ -11,23 +10,22 @@ services:
   - type: web
     name: service-bay-api
     env: python
-    region: frankfurt
     plan: free
+    region: frankfurt
     branch: main
     rootDir: backend
-    
-    # This is the corrected build command.
-    buildCommands: |
+
+    buildCommand: |
       pip install -r requirements.txt
       python manage.py migrate
-      
-    startCommand: "gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT"
-    
+
+    startCommand: gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT
+
     envVars:
       - key: DATABASE_URL
         fromDatabase:
           name: service-bay-db
-          property: connectionString # This line fixes the invalid property error
+          property: connectionString
       - key: DJANGO_SETTINGS_MODULE
         value: service_bay_api.settings
       - key: WEB_CONCURRENCY
