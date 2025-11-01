@@ -1,17 +1,18 @@
 import axios from 'axios';
 
-// --- THIS IS THE DEFINITIVE FIX ---
+// --- THIS IS THE DEFINITIVE PRODUCTION CONFIG ---
 
-// 1. Check if the frontend is being viewed on localhost.
-const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// 1. This is the live, public URL for your backend from Render.
+//    You MUST replace the placeholder with your real URL.
+const PRODUCTION_API_URL = 'https://service-bay-api.onrender.com/api'; // <-- PASTE YOUR RENDER URL HERE
 
-// 2. Get the computer's CURRENT network IP address.
-const networkIp = '192.168.1.102'; // <-- UPDATED to your new IP
+// 2. This is the local URL for development (when you run on your PC).
+const DEVELOPMENT_API_URL = 'http://127.0.0.1:8000/api';
 
-// 3. Intelligently choose the correct backend API address.
-const API_BASE_URL = isLocalhost
-  ? `http://127.0.0.1:8000/api` // Use this for PC (localhost)
-  : `http://${networkIp}:8000/api`; // Use this for Phone (network)
+// 3. This logic automatically chooses the correct URL.
+const API_BASE_URL = window.location.hostname === 'localhost'
+  ? DEVELOPMENT_API_URL
+  : PRODUCTION_API_URL;
 
 console.log(`API Base URL set to: ${API_BASE_URL}`); // For debugging
 
@@ -19,7 +20,7 @@ console.log(`API Base URL set to: ${API_BASE_URL}`); // For debugging
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 5000,
+  timeout: 10000, // Increased timeout for live servers
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
