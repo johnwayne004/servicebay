@@ -1,7 +1,7 @@
 # This is the definitive blueprint for Render.
-# It declaratively creates both the database and the web service.
+# It declaratively links to your existing database and web service.
 databases:
-  - name: service-bay-db
+  - name: service-bay-db  # MUST match the name of your existing database exactly
     databaseName: service_bay
     user: service_bay_user
     plan: free
@@ -16,7 +16,6 @@ services:
     branch: main
     rootDir: backend
 
-    # --- FIXED KEY NAME ---
     buildCommand: |
       pip install -r requirements.txt
       python manage.py migrate
