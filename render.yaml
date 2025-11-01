@@ -1,5 +1,6 @@
 # This is the definitive blueprint for Render.
 # It declaratively creates both the database and the web service.
+
 databases:
   - name: service-bay-db
     databaseName: service_bay
@@ -15,18 +16,21 @@ services:
     plan: free
     branch: main
     rootDir: backend
-
-    buildCommand: |
+    
+    # --- THIS IS THE FIX (PART 1) ---
+    # The buildCommands must only install packages and migrate the database.
+    buildCommands: |
       pip install -r requirements.txt
       python manage.py migrate
-      python manage.py createadmin
-
-    startCommand: gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT
-
+      
+    startCommand: "gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT"
+    
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: service-bay-db
+          name: service-bay-db # This must match your database name
+          # --- THIS IS THE FIX (PART 2) ---
+          # We must specify 'connectionString' as the property.
           property: connectionString
       - key: DJANGO_SETTINGS_MODULE
         value: service_bay_api.settings
@@ -36,10 +40,3 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
-
-# Environment variables for the 'createadmin' command
-# You must set these in the Render Dashboard.
-# Add them manually in the service’s Environment tab.
-envVars:
-  - key: ADMIN_EMAIL
-  - key: ADMIN_PASSWORD
