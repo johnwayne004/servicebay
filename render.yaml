@@ -1,5 +1,11 @@
-# This is the definitive blueprint for Render.
-# It defines ONLY the web service and connects to your EXISTING database.
+# This file creates both the database and the web service.
+
+databases:
+  - name: service-bay-db
+    databaseName: service_bay
+    user: service_bay_user
+    plan: free
+    region: frankfurt
 
 services:
   - type: web
@@ -10,6 +16,7 @@ services:
     branch: main
     rootDir: backend
     
+    # This is the corrected build command.
     buildCommands: |
       pip install -r requirements.txt
       python manage.py migrate
@@ -18,10 +25,9 @@ services:
     
     envVars:
       - key: DATABASE_URL
-        fromService:
-          type: psql
-          name: service-bay-db # This MUST match the name of your EXISTING database
-          property: connectionString
+        fromDatabase:
+          name: service-bay-db
+          property: connectionString # This line fixes the invalid property error
       - key: DJANGO_SETTINGS_MODULE
         value: service_bay_api.settings
       - key: WEB_CONCURRENCY
@@ -30,4 +36,3 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
-        
