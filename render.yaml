@@ -1,16 +1,17 @@
 services:
   - type: web
-    name: servicebay-1
+    name: servicebay-1               # must match your Render service name
     env: python
     plan: free
 
     buildCommand: |
+      cd backend
       pip install -r requirements.txt
       python manage.py migrate --noinput
       python manage.py collectstatic --noinput
-      python manage.py create_admin  
+      python manage.py create_admin
 
-    startCommand: gunicorn service_bay_api.wsgi:application
+    startCommand: cd backend && gunicorn service_bay_api.wsgi:application
 
     envVars:
       - key: DATABASE_URL
