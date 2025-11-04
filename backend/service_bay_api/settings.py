@@ -11,7 +11,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-loca
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # We must allow the Render domain name. '.onrender.com' is a wildcard.
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com', '.vercel.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'servicebay-1.onrender.com', '.vercel.app', '.onrender.com']
 
 # Application definition
 INSTALLED_APPS = [
