@@ -1,28 +1,21 @@
-# render.yaml
-# Web service only — uses existing Render database
 services:
   - type: web
     name: service-bay-api
     env: python
-    region: frankfurt
     plan: free
-    branch: main
-    rootDir: backend
-
     buildCommand: |
       pip install -r requirements.txt
-      python manage.py migrate
-
-    startCommand: gunicorn service_bay_api.wsgi:application --bind 0.0.0.0:$PORT
-
+      python manage.py migrate --noinput
+      python manage.py createadmin 
+    startCommand: gunicorn service_bay_api.wsgi:application
     envVars:
       - key: DATABASE_URL
-        value: <YOUR DATABASE INTERNAL URL HERE>
-      - key: DJANGO_SETTINGS_MODULE
-        value: service_bay_api.settings
-      - key: WEB_CONCURRENCY
-        value: 4
+        value: postgresql://service_bay_user:RZPyZJuvRizKZbuKGJaSccxNX5ct5wV0@dpg-d431ch8dl3ps73a11lf0-a/service_bay
       - key: SECRET_KEY
-        generateValue: true
+        value: your-secret-key-here
       - key: DEBUG
-        value: "False"
+        value: False
+      - key: ADMIN_EMAIL
+        value: waynendi004@gmail.com
+      - key: ADMIN_PASSWORD
+        value: YourStrongPassword123
