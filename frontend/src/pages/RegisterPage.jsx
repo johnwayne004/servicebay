@@ -394,7 +394,7 @@ const handleSubmit = async (e) => {
 
     try {
       // Send data to the Django backend
-      const response = await axiosInstance.post('http://127.0.0.1:8000/api/users/register/', form);
+      const response = await axiosInstance.post('https://servicebay-1.onrender.com/api/users/register/', form);
       
       console.log("SUCCESS:", response.data);
       setFormMessage("Account created successfully! Redirecting to login...");
