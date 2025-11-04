@@ -29,9 +29,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # must be first
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -95,6 +95,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.1.102:3000",
     "https://servicebay.vercel.app",
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://servicebay.vercel.app",  # your Vercel frontend
+    "https://*.onrender.com",         # your Render backend
+]
+
 CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
