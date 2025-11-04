@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // 1. This is the live, public URL for your backend from Render.
 //    You MUST replace the placeholder with your real URL.
-const PRODUCTION_API_URL = 'https://service-bay-api.onrender.com/api'; // <-- PASTE YOUR RENDER URL HERE
+const PRODUCTION_API_URL = 'https://servicebay-1.onrender.com'; // <-- PASTE YOUR RENDER URL HERE
 
 // 2. This is the local URL for development (when you run on your PC).
 const DEVELOPMENT_API_URL = 'http://127.0.0.1:8000/api';

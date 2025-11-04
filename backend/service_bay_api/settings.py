@@ -11,7 +11,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-loca
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # We must allow the Render domain name. '.onrender.com' is a wildcard.
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com', '.vercel.app']
 
 # Application definition
 INSTALLED_APPS = [
@@ -97,8 +97,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://servicebay.vercel.app",  # your Vercel frontend
-    "https://*.onrender.com",         # your Render backend
+    "https://servicebay.vercel.app",
+    "https://servicebay-1.onrender.com", # your Render backend
 ]
 
 CORS_ALLOW_CREDENTIALS = True
